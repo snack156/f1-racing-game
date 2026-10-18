@@ -1,16 +1,12 @@
-# Formula 1 POV — V14
+# FORMULA 1 POV — V15 Smooth Steering + DRS
 
-This version is based directly on V13.
+Based on V14. Unchanged: cockpit POV, multiplayer, start lights, circuit, fences, grandstands, pit stop, results.
 
-Changes only:
-- Slightly faster acceleration and maximum speed (132 m/s game units).
-- Increased field of view and added subtle speed streaks.
-- Larger, tiered grandstands with a roof and spectator colors.
-- Trackside concrete barriers, posts and catch fencing.
-- Precomputed scenery to reduce per-frame allocations.
+## Changes
+- Digital steering now eases in and returns to center smoothly; no auto-steering.
+- Hold **E** to activate DRS when **DRS AVAILABLE** appears.
+- DRS requires green flag, throttle, a car within 100 m ahead, and being in a designated straight zone. Braking, leaving the zone or losing eligibility closes DRS automatically.
+- DRS raises acceleration and top speed temporarily. This is a simplified gameplay mechanic, not an FIA rule simulation.
 
-Unchanged: cockpit POV, manual steering, track geometry, multiplayer rooms, starting lights, 3 laps, Safety Car, pit stops, results, English UI.
-
-Deploy all four code files to the repository root on GitHub. Render should redeploy from the latest commit.
-
-These are stylized 2D graphics rather than photorealistic 3D assets. Multiplayer browser testing is still recommended.
+## Deploy
+Upload `index.html`, `server.js`, `track.js`, `package.json` to GitHub. Render deploys from GitHub when auto-deploy is enabled.
