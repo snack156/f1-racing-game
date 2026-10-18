@@ -1,11 +1,16 @@
-# FORMULA 1 — POV Update V13
+# Formula 1 POV — V14
 
-Based on V12. Preserves the cockpit POV, multiplayer, steering, other cars, pit stops, and race HUD.
+This version is based directly on V13.
 
 Changes only:
-- Five red starting lights with a 5-second countdown.
-- Trackside grandstands, spectators, pit crews, and sponsor-style banners (original generic artwork).
-- Less saturated green scenery.
-- Slightly faster acceleration (43 to 51 m/s²) and max speed (105 to 118 m/s).
+- Slightly faster acceleration and maximum speed (132 m/s game units).
+- Increased field of view and added subtle speed streaks.
+- Larger, tiered grandstands with a roof and spectator colors.
+- Trackside concrete barriers, posts and catch fencing.
+- Precomputed scenery to reduce per-frame allocations.
 
-Upload index.html, server.js, track.js, package.json to GitHub. README is optional.
+Unchanged: cockpit POV, manual steering, track geometry, multiplayer rooms, starting lights, 3 laps, Safety Car, pit stops, results, English UI.
+
+Deploy all four code files to the repository root on GitHub. Render should redeploy from the latest commit.
+
+These are stylized 2D graphics rather than photorealistic 3D assets. Multiplayer browser testing is still recommended.
