@@ -1,13 +1,11 @@
-FORMULA 1 — DRIVER POV (FAST & VISIBLE)
+# FORMULA 1 — POV Update V13
 
-Upload index.html, server.js, track.js and package.json to the root of your GitHub repository.
+Based on V12. Preserves the cockpit POV, multiplayer, steering, other cars, pit stops, and race HUD.
 
-Changes from the previous version:
-- Faster acceleration and higher top speed (105 m/s / 378 km/h)
-- Larger, recognizable opponent cars with clear driver names
-- Driver POV, manual steering, track and room multiplayer retained
-- Road geometry cached to reduce browser work
+Changes only:
+- Five red starting lights with a 5-second countdown.
+- Trackside grandstands, spectators, pit crews, and sponsor-style banners (original generic artwork).
+- Less saturated green scenery.
+- Slightly faster acceleration (43 to 51 m/s²) and max speed (105 to 118 m/s).
 
-Controls: W / Up = accelerate, S / Down = brake, A/D or Left/Right = steer.
-
-This is an unverified gameplay build; test handling and online sessions after deployment.
+Upload index.html, server.js, track.js, package.json to GitHub. README is optional.
