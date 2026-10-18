@@ -4,12 +4,13 @@ const {Server}=require('socket.io');
 const app=express(),server=http.createServer(app),io=new Server(server);
 app.use(express.static(__dirname));
 const rooms=new Map();
+const Track=require('./track.js');
 const TRACK=6000,LAPS=3,MAX=92,TICK=50;
 const COLORS=['#ff3048','#318aff','#ffd43b','#aa72ff','#f0f0f0','#ff8b2b','#111111'];
 const clean=s=>String(s||'').replace(/[<>]/g,'').trim().slice(0,16);
 const randCode=()=>Array.from({length:6},()=> 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'[Math.floor(Math.random()*32)]).join('');
 function code(){let c;do{c=randCode()}while(rooms.has(c));return c}
-function curve(d){const t=((d%TRACK)+TRACK)%TRACK/TRACK*Math.PI*2;return Math.sin(t*3)*.55+Math.sin(t*5+1.1)*.38}
+function curve(d){return Track.curvature(d)}
 function snapshot(r){return {code:r.code,host:r.host,state:r.state,flag:r.flag,flagUntil:r.flagUntil,startAt:r.startAt,players:[...r.players.values()].map(p=>({id:p.id,name:p.name,color:p.color,ready:p.ready,dist:p.dist,x:p.x,speed:p.speed,lap:Math.min(LAPS,1+Math.floor(p.dist/TRACK)),finished:p.finished,dnf:p.dnf,total:p.total,best:p.best,pit:p.pit,pitUsed:p.pitUsed,pitUntil:p.pitUntil})),results:r.results||[]}}
 function emit(r){io.to(r.code).emit('room',snapshot(r))}
 function leave(s){const r=rooms.get(s.data.room);if(!r)return;r.players.delete(s.id);s.leave(r.code);s.data.room=null;if(!r.players.size){rooms.delete(r.code);return}if(r.host===s.id)r.host=r.players.keys().next().value;emit(r)}
@@ -36,7 +37,9 @@ let last=Date.now();setInterval(()=>{const now=Date.now(),dt=Math.min(.08,(now-l
   p.speed+=(p.gas?23:p.brake?-48:-9)*dt;
   if(Math.abs(p.x)>1)p.speed-=24*dt;
   p.speed=Math.max(0,Math.min(r.flag==='safety'?28:MAX,p.speed));
-  p.x+=p.steer*dt*(.35+p.speed/MAX*1.5)-curve(p.dist)*dt*(p.speed/MAX)**2*.45;
+  // Track curvature is derived from the exact same circuit geometry drawn by the client.
+  // Steering is relative to the road; at speed the car drifts to the outside of bends.
+  p.x+=p.steer*dt*(.65+p.speed/MAX*1.8)-curve(p.dist)*p.speed*p.speed*dt*.0045;
   p.x=Math.max(-2.6,Math.min(2.6,p.x));
   // Only a sustained, severe off-track excursion triggers DNF.
   if(Math.abs(p.x)>2.3&&p.speed>8)p.offroad+=dt;else p.offroad=Math.max(0,p.offroad-dt*2);
@@ -50,7 +53,7 @@ let last=Date.now();setInterval(()=>{const now=Date.now(),dt=Math.min(.08,(now-l
  // Simplified contact detection: significant overlap at race speed may cause a safety car.
  if(r.flag==='green')for(let i=0;i<ps.length;i++)for(let j=i+1;j<ps.length;j++){
   const a=ps[i],b=ps[j];if(a.dnf||b.dnf||a.finished||b.finished||a.pit||b.pit)continue;
-  if(Math.abs(a.dist-b.dist)<7&&Math.abs(a.x-b.x)<.17&&Math.max(a.speed,b.speed)>25){
+  if(now-r.startAt>7000&&Math.abs(a.dist-b.dist)<7&&Math.abs(a.x-b.x)<.17&&Math.max(a.speed,b.speed)>25){
    const victim=a.speed>=b.speed?a:b;victim.dnf=true;victim.speed=0;flag(r,now);io.to(r.code).emit('notice','CONTACT — '+victim.name+' DNF');break;
   }
  }
